@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">Alexoro-NetworkManager</string>
+    <string name="network_do_not_await">Do not await connection</string>
+    <string name="network_await">Await network connection</string>
+
+</resources>
