@@ -19,8 +19,8 @@ package com.alexoro.networkmanager;
  */
 public class NetworkCondition {
 
-    public boolean isAwaitConnection;
-    public boolean isAllowInRoaming;
+    public boolean isAwaitConnection = false;
+    public boolean isAllowInRoaming = true;
 
     @Override
     public String toString() {

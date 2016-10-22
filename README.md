@@ -48,3 +48,5 @@ condition.isAllowInRoaming = true;
 // until the connection will be established.
 networkManager.execute(<callable>, condition);
 ```
+## Things to know
+Manager catches IOException and treat it as network error. So do not throw any internal IOException in your task, because this may product infinite request loop.

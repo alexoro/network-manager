@@ -153,14 +153,14 @@ public class NetworkManager {
         }
 
         while (true) {
-            if (!isConnected()) {
-                if (condition.isAwaitConnection) {
-                    synchronized (mIntegrityLock) {
+            synchronized (mIntegrityLock) {
+                if (!isConnected()) {
+                    if (condition.isAwaitConnection) {
                         mIntegrityLock.wait();
                         continue;
+                    } else {
+                        throw new NetworkConditionException(NetworkConditionException.Reason.NO_CONNECTION);
                     }
-                } else {
-                    throw new NetworkConditionException(NetworkConditionException.Reason.NO_CONNECTION);
                 }
             }
 
@@ -172,16 +172,10 @@ public class NetworkManager {
 
             try {
                 return callable.call();
-
             } catch (IOException ex) {
-                if (!isConnected() || isRoaming()) {
-                    continue;
-                } else {
-                    if (isHasInternalConsumer) {
-                        stopObserveImpl(callable);
-                    }
-                    throw ex;
-                }
+                // Any IOException is treated as NetworkException
+                // So, let's retry
+                continue;
             } catch (Exception ex) {
                 if (isHasInternalConsumer) {
                     stopObserveImpl(callable);
