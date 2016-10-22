@@ -33,6 +33,10 @@ public class NetworkConditionException extends Exception {
         mReason = reason;
     }
 
+    public Reason getReason() {
+        return mReason;
+    }
+
     @Override
     public String toString() {
         return "NetworkConditionException{" +
