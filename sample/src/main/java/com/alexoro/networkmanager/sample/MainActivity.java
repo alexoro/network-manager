@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
                 condition.isAllowInRoaming = true;
 
                 try {
-                    networkManager.execute(new EmptyCallable(), condition);
+                    networkManager.executeByCondition(new EmptyCallable(), condition);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
                 condition.isAllowInRoaming = true;
 
                 try {
-                    networkManager.execute(new EmptyCallable(), condition);
+                    networkManager.executeByCondition(new EmptyCallable(), condition);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

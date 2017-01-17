@@ -38,6 +38,18 @@ public class NetworkManager {
         INTENT_FILTER_NETWORK.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     }
 
+    private static final NetworkCondition COND_AWAIT_NETWORK_FALSE;
+    private static final NetworkCondition COND_AWAIT_NETWORK_TRUE;
+    static {
+        COND_AWAIT_NETWORK_FALSE = new NetworkCondition();
+        COND_AWAIT_NETWORK_FALSE.isAllowInRoaming = true;
+        COND_AWAIT_NETWORK_FALSE.isAwaitConnection = false;
+
+        COND_AWAIT_NETWORK_TRUE = new NetworkCondition();
+        COND_AWAIT_NETWORK_TRUE.isAllowInRoaming = true;
+        COND_AWAIT_NETWORK_TRUE.isAwaitConnection = true;
+    }
+
 
     private final Context mAppContext;
     private final ConnectivityManager mConnectivityManager;
@@ -136,8 +148,16 @@ public class NetworkManager {
 
     // ====================================================================
 
-    public <T> T execute(Callable<T> callable,
-                         NetworkCondition condition)
+    public <T> T execute(Callable<T> callable) throws Exception {
+        return executeByCondition(callable, COND_AWAIT_NETWORK_FALSE);
+    }
+
+    public <T> T executeAndAwaitNetwork(Callable<T> callable) throws Exception {
+        return executeByCondition(callable, COND_AWAIT_NETWORK_TRUE);
+    }
+
+    public <T> T executeByCondition(Callable<T> callable,
+                                    NetworkCondition condition)
             throws Exception {
 
         if (callable == null) {
