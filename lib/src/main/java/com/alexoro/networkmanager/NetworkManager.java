@@ -148,12 +148,10 @@ public class NetworkManager {
 
     // ====================================================================
 
-    public <T> T execute(Callable<T> callable) throws Exception {
-        return executeByCondition(callable, COND_AWAIT_NETWORK_FALSE);
-    }
-
-    public <T> T executeAndAwaitNetwork(Callable<T> callable) throws Exception {
-        return executeByCondition(callable, COND_AWAIT_NETWORK_TRUE);
+    public <T> T execute(Callable<T> callable, boolean isAwaitNetwork) throws Exception {
+        return executeByCondition(
+                callable,
+                isAwaitNetwork ? COND_AWAIT_NETWORK_TRUE : COND_AWAIT_NETWORK_FALSE);
     }
 
     public <T> T executeByCondition(Callable<T> callable,
