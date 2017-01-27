@@ -170,35 +170,41 @@ public class NetworkManager {
             startObserveImpl(callable);
         }
 
-        while (true) {
-            synchronized (mIntegrityLock) {
-                if (!isConnected()) {
-                    if (condition.isAwaitConnection) {
-                        mIntegrityLock.wait();
-                        continue;
-                    } else {
-                        throw new NetworkConditionException(NetworkConditionException.Reason.NO_CONNECTION);
+        try {
+            while (true) {
+                synchronized (mIntegrityLock) {
+                    if (!isConnected()) {
+                        if (condition.isAwaitConnection) {
+                            mIntegrityLock.wait();
+                            continue;
+                        } else {
+                            throw new NetworkConditionException(NetworkConditionException.Reason.NO_CONNECTION);
+                        }
                     }
                 }
-            }
 
-            if (isRoaming()) {
-                if (!condition.isAllowInRoaming) {
-                    throw new NetworkConditionException(NetworkConditionException.Reason.ROAMING);
+                if (isRoaming()) {
+                    if (!condition.isAllowInRoaming) {
+                        throw new NetworkConditionException(NetworkConditionException.Reason.ROAMING);
+                    }
+                }
+
+                try {
+                    return callable.call();
+                } catch (IOException ex) {
+                    if (!isConnected() && condition.isAwaitConnection) {
+                        // So, let's retry
+                        continue;
+                    } else {
+                        throw ex;
+                    }
+                } catch (Exception ex) {
+                    throw ex;
                 }
             }
-
-            try {
-                return callable.call();
-            } catch (IOException ex) {
-                // Any IOException is treated as NetworkException
-                // So, let's retry
-                continue;
-            } catch (Exception ex) {
-                if (isHasInternalConsumer) {
-                    stopObserveImpl(callable);
-                }
-                throw ex;
+        } finally {
+            if (isHasInternalConsumer) {
+                stopObserveImpl(callable);
             }
         }
     }
